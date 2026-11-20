@@ -1,0 +1,146 @@
+
+import time
+import random
+
+# Class 1: Food
+class Food:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+
+# Class 2: Customer
+class Customer:
+    def __init__(self, name, phone):
+        self.name = name
+        self.phone = phone
+
+
+# Class 3: Order
+class Order:
+    def __init__(self, customer):
+        self.order_id = random.randint(1000, 9999)
+        self.customer = customer
+        self.items = []
+        self.status = "Order Placed"
+
+    def add_item(self, food, quantity):
+        self.items.append((food, quantity))
+
+    def calculate_bill(self):
+        total = 0
+        for food, quantity in self.items:
+            total += food.price * quantity
+        return total
+
+    def display_order(self):
+        print("\n------ ORDER DETAILS ------")
+        print("Order ID:", self.order_id)
+        print("Customer:", self.customer.name)
+
+        for food, quantity in self.items:
+            print(food.name, "x", quantity, "=", food.price * quantity)
+
+        print("Total Amount: Rs.", self.calculate_bill())
+
+
+# Class 4: Food Delivery Tracking
+class FoodTracker:
+    def __init__(self, order):
+        self.order = order
+
+    def track_order(self):
+        stages = [
+            "Order Placed",
+            "Food Preparing",
+            "Out for Delivery",
+            "Delivered"
+        ]
+
+        print("\n------ LIVE ORDER TRACKING ------")
+
+        for stage in stages:
+            self.order.status = stage
+            print("Current Status:", stage)
+            time.sleep(2)
+
+        print("\nYour food has been delivered!")
+
+
+# Main Application
+class FoodDeliverySystem:
+
+    def __init__(self):
+        self.menu = [
+            Food("Pizza", 199),
+            Food("Burger", 99),
+            Food("Biryani", 149),
+            Food("Sandwich", 79),
+            Food("Pasta", 129)
+        ]
+
+    def display_menu(self):
+        print("\n------ FOOD MENU ------")
+
+        for i, food in enumerate(self.menu, 1):
+            print(i, ".", food.name, "- Rs.", food.price)
+
+    def run(self):
+        print("================================")
+        print("     ONLINE FOOD TRACKING")
+        print("================================")
+
+        name = input("Enter your name: ")
+        phone = input("Enter phone number: ")
+
+        customer = Customer(name, phone)
+        order = Order(customer)
+
+        while True:
+            self.display_menu()
+
+            try:
+                choice = int(input("\nSelect food number (0 to finish): "))
+
+                if choice == 0:
+                    break
+
+                if choice < 1 or choice > len(self.menu):
+                    print("Invalid food selection!")
+                    continue
+
+                quantity = int(input("Enter quantity: "))
+
+                if quantity <= 0:
+                    print("Quantity must be positive!")
+                    continue
+
+                food = self.menu[choice - 1]
+                order.add_item(food, quantity)
+
+                print(food.name, "added successfully!")
+
+            except ValueError:
+                print("Please enter a valid number!")
+
+        if not order.items:
+            print("No items ordered. Thank you!")
+            return
+
+        order.display_order()
+
+        print("\n1. Track My Order")
+        print("2. Exit")
+
+        option = input("Enter your choice: ")
+
+        if option == "1":
+            tracker = FoodTracker(order)
+            tracker.track_order()
+
+        print("\nThank you for using our application!")
+
+
+# Execute Application
+app = FoodDeliverySystem()
+app.run()
